@@ -47,8 +47,22 @@ public class Stars {
 				r = color.getRed();
 				PixelNode neighbor = new PixelNode(r);
 				Edge edge = new Edge(node, neighbor);
+				queue.add(edge);
+			
+			}
+		}
+		for (int j = 0; j < height; j++) {
+			for (int i = 0; i < width; i++) {
 				
-				
+				Color color = new Color(starImg.getRGB(i,j));
+				int r = color.getRed();
+				PixelNode node = new PixelNode(r);
+				color = new Color(starImg.getRGB(i, j + 1));
+				r = color.getRed();
+				PixelNode neighbor = new PixelNode(r);
+				Edge edge = new Edge(node, neighbor);
+				queue.add(edge);
+			
 			}
 		}
 		
