@@ -36,36 +36,28 @@ public class Stars {
 			};
 		});
 		
-		// TODO: iterate through all pixels and do operations
-		for (int i = 0; i < width; i++) {
+		// iterate through all pixels and do operations
+		for (int i = 0; i < width - 1; i++) {
 			for (int j = 0; j < height; j++) {
-				
-				Color color = new Color(starImg.getRGB(i,j));
-				int r = color.getRed();
-				PixelNode node = new PixelNode(r);
-				color = new Color(starImg.getRGB(i + 1, j));
-				r = color.getRed();
-				PixelNode neighbor = new PixelNode(r);
-				Edge edge = new Edge(node, neighbor);
-				queue.add(edge);
-			
+				// Inline getBlue() with & 0xFF mask
+				queue.add(
+						new Edge(
+							new PixelNode(starImg.getRGB(i,j) & 0xFF, i, j), 
+							new PixelNode(starImg.getRGB(i + 1,j) & 0xFF, i + 1, j)
+						)
+					);
 			}
 		}
-		for (int j = 0; j < height; j++) {
+		for (int j = 0; j < height - 1; j++) {
 			for (int i = 0; i < width; i++) {
-				
-				Color color = new Color(starImg.getRGB(i,j));
-				int r = color.getRed();
-				PixelNode node = new PixelNode(r);
-				color = new Color(starImg.getRGB(i, j + 1));
-				r = color.getRed();
-				PixelNode neighbor = new PixelNode(r);
-				Edge edge = new Edge(node, neighbor);
-				queue.add(edge);
-			
+				queue.add(
+						new Edge(
+							new PixelNode(starImg.getRGB(i,j) & 0xFF, i, j), 
+							new PixelNode(starImg.getRGB(i,j + 1) & 0xFF, i, j + 1)
+						)
+					);		
 			}
-		}
-		
+		}		
 	}
 
 }

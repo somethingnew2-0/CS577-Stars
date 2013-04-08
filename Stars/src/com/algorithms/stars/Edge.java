@@ -8,8 +8,7 @@ public class Edge {
 	public Edge (PixelNode right, PixelNode left) {
 			this.right = right;
 			this.left = left;
-			average = right.getR() + left.getR();
-			average = average/2;
+			average = (right.getIntensity() + left.getIntensity())/2;
 	}
 	
 	public int getAverage() {
