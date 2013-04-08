@@ -5,20 +5,20 @@ public class UnionFind {
 	// A union find data structure using pointers
 	public UnionFind() { }	
 
-	public EdgeNode find(EdgeNode node) {
+	public Edge find(Edge node) {
 		if(node.getParent() == null) {
 			return node;
 		} else {
 			// use path compression
-			EdgeNode parentNode = find(node);
+			Edge parentNode = find(node);
 			node.setParent(parentNode);
 			return parentNode;
 		}
 	}
 	
-	public void union(EdgeNode first, EdgeNode second) {
-		EdgeNode firstRoot = find(first);
-		EdgeNode secondRoot = find(second);
+	public void union(Edge first, Edge second) {
+		Edge firstRoot = find(first);
+		Edge secondRoot = find(second);
 
 		if(firstRoot == secondRoot) {
 			return;

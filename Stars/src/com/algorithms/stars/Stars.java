@@ -32,7 +32,7 @@ public class Stars {
 		// make a priority queue to hold edges with custom comparator
 		PriorityQueue<Edge> queue = new PriorityQueue<Edge>(capacity, new Comparator<Edge>() {
 			public int compare(Edge edgeOne, Edge edgeTwo) {
-				return edgeOne.getAverage() - edgeTwo.getAverage();
+				return edgeOne.getAverageIntensity() - edgeTwo.getAverageIntensity();
 			};
 		});
 		
