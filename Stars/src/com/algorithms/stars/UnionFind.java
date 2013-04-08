@@ -8,10 +8,8 @@ public class UnionFind {
 			return edge;
 		} else {
 			// use path compression
-			Edge parentEdge = find(edge);
-			if(edge != parentEdge) {
-				edge.setParent(parentEdge);
-			}
+			Edge parentEdge = find(edge.getParent());
+			edge.setParent(parentEdge);
 			return parentEdge;
 		}
 	}

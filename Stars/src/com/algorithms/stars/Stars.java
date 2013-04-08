@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 public class Stars {
 	
-	private static final int EDGE_INTENSITY_FALLOFF = 64;
+	private static final int EDGE_INTENSITY_FALLOFF = 32;
 
 	/**
 	 * @param args
@@ -83,7 +83,7 @@ public class Stars {
 		
 		while (!queue.isEmpty()) {
 			Edge edge = queue.poll();
-			System.out.println(edge.getAverageIntensity());
+//			System.out.println(edge.getAverageIntensity());
 			PixelNode firstPixel = edge.getFirst();
 			PixelNode secondPixel = edge.getSecond();
 			Edge firstPixelEdge = firstPixel.getEdge();
@@ -113,7 +113,7 @@ public class Stars {
 			}
 		}
 		
-		totalPixelNodes = new TreeSet<PixelNode>(totalPixelNodes);
+//		totalPixelNodes = new TreeSet<PixelNode>(totalPixelNodes);
 		Set<Edge> stars = new HashSet<Edge>();
 		for (PixelNode pixelNode : totalPixelNodes) {
 			stars.add(UnionFind.find(pixelNode.getEdge()));
