@@ -1,7 +1,7 @@
 CS577-Stars
 ===========
 
-Finding "Stars" using Max Spanning Trees and a UnionCFind Data 
+Finding "Stars" using Max Spanning Trees and a UnionFind Data 
 Structure
 
 Idea:  Implement the UnionFind data structure and use it with a Max Spanning Tree 
