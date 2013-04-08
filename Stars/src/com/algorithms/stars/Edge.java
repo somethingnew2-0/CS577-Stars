@@ -14,6 +14,14 @@ public class Edge {
 			this.rank = 0;
 	}
 	
+	public PixelNode getFirst() {
+		return first;
+	}
+
+	public PixelNode getSecond() {
+		return second;
+	}
+
 	public int getAverageIntensity() {
 		return this.averageIntensity;
 	}
@@ -33,6 +41,4 @@ public class Edge {
 	public void incrementRank() {
 		rank++;
 	}
-		
-	
 }

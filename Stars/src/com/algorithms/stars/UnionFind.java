@@ -2,27 +2,21 @@ package com.algorithms.stars;
 
 public class UnionFind {
 
-	// A union find data structure using pointers
-	public UnionFind() { }	
-
-	public Edge find(Edge node) {
-		if(node.getParent() == null) {
-			return node;
+	// A union find data structure methods using pointers
+	public static Edge find(Edge edge) {
+		if(edge.getParent() == null) {
+			return edge;
 		} else {
 			// use path compression
-			Edge parentNode = find(node);
-			node.setParent(parentNode);
-			return parentNode;
+			Edge parentEdge = find(edge);
+			if(edge != parentEdge) {
+				edge.setParent(parentEdge);
+			}
+			return parentEdge;
 		}
 	}
 	
-	public void union(Edge first, Edge second) {
-		Edge firstRoot = find(first);
-		Edge secondRoot = find(second);
-
-		if(firstRoot == secondRoot) {
-			return;
-		}
+	public static void union(Edge firstRoot, Edge secondRoot) {
         // first and second are not already in same set. Merge them.
 		if(firstRoot.getRank() < secondRoot.getRank()) {
 			firstRoot.setParent(secondRoot);
