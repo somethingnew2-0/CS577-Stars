@@ -46,6 +46,7 @@ public class Stars {
 							new PixelNode(starImg.getRGB(i + 1,j) & 0xFF, i + 1, j)
 						)
 					);
+				
 			}
 		}
 		for (int j = 0; j < height - 1; j++) {
@@ -55,7 +56,7 @@ public class Stars {
 							new PixelNode(starImg.getRGB(i,j) & 0xFF, i, j), 
 							new PixelNode(starImg.getRGB(i,j + 1) & 0xFF, i, j + 1)
 						)
-					);		
+					);
 			}
 		}		
 	}
