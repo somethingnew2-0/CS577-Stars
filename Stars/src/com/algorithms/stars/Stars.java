@@ -1,5 +1,10 @@
 package com.algorithms.stars;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
@@ -20,13 +25,18 @@ public class Stars {
 	 */
 	public static void main(String[] args) {
 		File inFile = new File("stars.jpg");
-		BufferedImage starImg = null;
+		BufferedImage starImg = null, constellationImg = null;
 		try {
 			starImg = ImageIO.read(inFile);
 		} catch (IOException exc) {
 			System.out.println("Could not access input file.");
 			System.exit(0);
 		}
+		
+		 ColorModel cm = starImg.getColorModel();
+		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		 WritableRaster raster = starImg.copyData(null);
+		 constellationImg = new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 		
 		//int [] pixels = starImg.getRGB(0, 0, starImg.getWidth(), starImg.getHeight(), null, 0, starImg.getWidth());
 		int width = starImg.getWidth();
@@ -176,16 +186,35 @@ public class Stars {
 			constellations.add((StarNode)UnionFind.find(starNode));
 		}
 		
+		Graphics2D g2d = constellationImg.createGraphics();
+        BasicStroke bs = new BasicStroke(2);
+        g2d.setStroke(bs);
+        g2d.setColor(Color.RED);
+        
 		List<ConstellationNode> totalConstellationNodes = new LinkedList<ConstellationNode>();
 		for (StarNode starNodeRoot : constellations) {
 			ConstellationNode constellationNode = new ConstellationNode(starNodeRoot);
 			System.out.println("ConstellationNode: " + constellationNode.getX() + " " + constellationNode.getY());
 			for (StarNode starNode : constellationNode.getStars()) {
 				System.out.println("     StarNode: " + starNode.getX() + " " + starNode.getY());
+				for (Edge starEdge : starNode.getEdges()) {
+					StarNode firstStar = (StarNode) starEdge.getFirst();
+					StarNode secondStar = (StarNode) starEdge.getSecond();
+					g2d.drawLine(firstStar.getX(), firstStar.getY(), secondStar.getX(), secondStar.getY());	
+				}
 			}
 			totalConstellationNodes.add(constellationNode);
 		}
 		
 		System.out.println(constellations.size());
+		
+		try {
+		    // retrieve image
+		    File outputfile = new File("constellation.jpg");
+		    ImageIO.write(constellationImg, "jpg", outputfile);
+		} catch (IOException e) {
+			System.out.println("Could not write output file.");
+			System.exit(0);
+		}
 	}	
 }
