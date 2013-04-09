@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 public class Stars {
 	
 	private static final int EDGE_INTENSITY_FALLOFF = 128;
+	private static final float CONSTELLATION_CONSTANT = 1.9f;
 
 	/**
 	 * @param args
@@ -100,6 +101,7 @@ public class Stars {
 			}
 		}
 		
+		// Run Kruskal's algorithm for the Max-Spanning Tree
 		while (!pixelMaxPriorityQueue.isEmpty()) {
 			Edge edge = pixelMaxPriorityQueue.poll();
 			Node first = edge.getFirst();
@@ -124,7 +126,7 @@ public class Stars {
 		
 		List<StarNode> totalStarNodes = new LinkedList<StarNode>();
 		
-		int broadphaseLegSize = (int)(Math.sqrt(stars.size()));
+		int broadphaseLegSize = (int)(Math.sqrt(stars.size() * CONSTELLATION_CONSTANT));
 		int broadphaseCellWidth = starImg.getWidth() / broadphaseLegSize;
 		int broadphaseCellHeight = starImg.getHeight() / broadphaseLegSize;
 		List<StarNode>[][] broadphaseStars = new LinkedList[broadphaseLegSize][broadphaseLegSize];
