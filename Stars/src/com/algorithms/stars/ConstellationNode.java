@@ -32,22 +32,9 @@ public class ConstellationNode extends Node {
 		return stars;
 	}
 
-	private void createNodeGraph(Node node) {
-		createNodeGraph(node, null);
-	}
 	
-	private void createNodeGraph(Node node, Edge enteringEdge) {
+	protected void createNodeGraph(Node node, Edge enteringEdge) {
 		stars.add((StarNode)node);
-		for (Edge edge : node.getEdges()) {
-			if(edge == enteringEdge) {
-				continue;
-			}
-			if(edge.getFirst() == node) {
-				createNodeGraph(edge.getSecond(), edge);
-			} else {
-				createNodeGraph(edge.getFirst(), edge);
-			}
-		}
-		
+		super.createNodeGraph(node, enteringEdge);
 	}
 }

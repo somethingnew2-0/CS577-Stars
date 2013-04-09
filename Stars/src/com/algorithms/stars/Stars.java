@@ -133,7 +133,8 @@ public class Stars {
 			broadphaseCell.add(starNode);
 		}
 		
-				
+		
+		// Add edges between stars of neighboring broadphase star cells
 		for (int x = 0; x < broadphaseLegSize - 1; x++) {
 			for (int y = 0; y < broadphaseLegSize - 1; y++) {
 				List<StarNode> broadphaseStarCell = broadphaseStars[x][y];
@@ -159,6 +160,7 @@ public class Stars {
 			
 		}
 		
+		// Run Kruskal's algorithm for the Min-Spanning Tree
 		while (!starMinPriorityQueue.isEmpty()) {
 			Edge edge = starMinPriorityQueue.poll();
 			Node first = edge.getFirst();
@@ -167,8 +169,7 @@ public class Stars {
 				first.addEdge(edge);
 				second.addEdge(edge);
 			}
-		}
-	
+		}	
 		
 		Set<StarNode> constellations = new HashSet<StarNode>();
 		for (StarNode starNode : totalStarNodes) {
