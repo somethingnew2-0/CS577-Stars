@@ -1,14 +1,13 @@
 package com.algorithms.stars;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.awt.image.BufferedImage;
 
 public class PixelNode extends Node {
 	private int intensity, x, y;
 	
-	public PixelNode(int intensity, int x, int y) {
+	public PixelNode(BufferedImage image, int x, int y) {
 		super();
-		this.intensity = intensity;
+		this.intensity = image.getRGB(x, y) & 0xFF;
 		this.x = x;
 		this.y = y;
 	}

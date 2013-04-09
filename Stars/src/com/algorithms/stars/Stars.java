@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 
@@ -41,7 +40,15 @@ public class Stars {
 		});
 		
 		Set<PixelNode> totalPixelNodes = new HashSet<PixelNode>();
-		// iterate through all pixels and add unique nodes with edges
+		// iterate through all pixels and add unique nodes with edges like so
+		// where dots represent pixels and dashes are edges
+		// .-.-.-.-.
+		// | | | | |
+		// .-.-.-.-.
+		// | | | | |
+		// .-.-.-.-.
+		// | | | | |
+		// .-.-.-.-.
 		PixelNode[] nextColumnRight = new PixelNode[height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -49,19 +56,19 @@ public class Stars {
 				// Inline getBlue() with & 0xFF mask
 				if(x == 0) {
 					if(y == 0) {
-						currentNode = new PixelNode(starImg.getRGB(0, 0) & 0xFF, 0, 0);
+						currentNode = new PixelNode(starImg, 0, 0);
 					}
 					else {
 						currentNode = nextColumnRight[y];
 					}
 					if(y < height - 1) {
-						nextColumnRight[y+1] = new PixelNode(starImg.getRGB(x, 1) & 0xFF, x, y + 1);
+						nextColumnRight[y+1] = new PixelNode(starImg, x, y + 1);
 					}
 				} else {
 					currentNode = nextColumnRight[y];
 				}
 				if(x < width - 1) {
-					nextColumnRight[y] = new PixelNode(starImg.getRGB(x + 1, y) & 0xFF, x + 1, y);
+					nextColumnRight[y] = new PixelNode(starImg, x + 1, y);
 
 					Edge edge = new PixelEdge(currentNode, nextColumnRight[y]);
 					if(edge.getWeight() > EDGE_INTENSITY_FALLOFF) {
