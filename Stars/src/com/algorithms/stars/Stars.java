@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -11,7 +13,7 @@ import javax.imageio.ImageIO;
 
 public class Stars {
 	
-	private static final int EDGE_INTENSITY_FALLOFF = 32;
+	private static final int EDGE_INTENSITY_FALLOFF = 128;
 
 	/**
 	 * @param args
@@ -33,7 +35,7 @@ public class Stars {
 		int capacity = width * height; // initial capacity set to total # pixels
 		
 		// make a priority queue to hold edges with custom comparator
-		PriorityQueue<Edge> queue = new PriorityQueue<Edge>(capacity, new Comparator<Edge>() {
+		PriorityQueue<Edge> pixelMaxPriorityQueue = new PriorityQueue<Edge>(capacity, new Comparator<Edge>() {
 			public int compare(Edge edgeOne, Edge edgeTwo) {
 				return edgeTwo.getWeight() - edgeOne.getWeight();
 			};
@@ -74,7 +76,7 @@ public class Stars {
 					if(edge.getWeight() > EDGE_INTENSITY_FALLOFF) {
 						totalPixelNodes.add(currentNode);
 						totalPixelNodes.add(nextColumnRight[y]);
-						queue.add(edge);
+						pixelMaxPriorityQueue.add(edge);
 					}
 				}
 				if(y < height - 1) {
@@ -82,14 +84,14 @@ public class Stars {
 					if(edge.getWeight() > EDGE_INTENSITY_FALLOFF) {
 						totalPixelNodes.add(currentNode);
 						totalPixelNodes.add(nextColumnRight[y+1]);
-						queue.add(edge);
+						pixelMaxPriorityQueue.add(edge);
 					}
 				}
 			}
 		}
 		
-		while (!queue.isEmpty()) {
-			Edge edge = queue.poll();
+		while (!pixelMaxPriorityQueue.isEmpty()) {
+			Edge edge = pixelMaxPriorityQueue.poll();
 			Node first = edge.getFirst();
 			Node second = edge.getSecond();
 			if(UnionFind.union(first, second)) {
@@ -98,12 +100,36 @@ public class Stars {
 			}
 		}
 		
-		Set<Node> stars = new HashSet<Node>();
+		Set<PixelNode> stars = new HashSet<PixelNode>();
 		for (PixelNode pixelNode : totalPixelNodes) {
-			stars.add(UnionFind.find(pixelNode));
+			stars.add((PixelNode)UnionFind.find(pixelNode));
 		}
-		
 		System.out.println(stars.size());
+		
+		PriorityQueue<Edge> starMinPriorityQueue = new PriorityQueue<Edge>(capacity, new Comparator<Edge>() {
+			public int compare(Edge edgeOne, Edge edgeTwo) {
+				return edgeOne.getWeight() - edgeTwo.getWeight();
+			};
+		});
+		
+		int broadphaseLegSize = (int)(Math.sqrt(stars.size()));
+		int broadphaseCellWidth = starImg.getWidth() / broadphaseLegSize;
+		int broadphaseCellHeight = starImg.getHeight() / broadphaseLegSize;
+		List<StarNode>[][] broadphaseStars = new LinkedList[broadphaseLegSize][broadphaseLegSize];
+		for (PixelNode pixelNodeRoot : stars) {
+			StarNode starNode = new StarNode(pixelNodeRoot);
+			System.out.println("StarNode: " + starNode.getX() + " " + starNode.getY());
+			LinkedList<StarNode> broadphaseCell = (LinkedList<StarNode>) broadphaseStars[starNode.getX()/(broadphaseCellWidth+1)][starNode.getY()/(broadphaseCellHeight+1)];
+			if(broadphaseCell == null) {
+				broadphaseStars[starNode.getX()/(broadphaseCellWidth+1)][starNode.getY()/(broadphaseCellHeight+1)] = broadphaseCell = new LinkedList<StarNode>();
+			} else {
+				for (StarNode neighborStarNode : broadphaseCell) {
+					starMinPriorityQueue.add(new StarEdge(starNode, neighborStarNode));
+				}
+			}
+			broadphaseCell.add(starNode);
+		}
+		System.out.println("Done");
 	}
 
 }
