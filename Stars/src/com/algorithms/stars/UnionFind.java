@@ -3,19 +3,24 @@ package com.algorithms.stars;
 public class UnionFind {
 
 	// A union find data structure methods using pointers
-	public static Edge find(Edge edge) {
-		if(edge.getParent() == null) {
-			return edge;
+	public static Node find(Node node) {
+		if(node.getParent() == null) {
+			return node;
 		} else {
 			// use path compression
-			Edge parentEdge = find(edge.getParent());
-			edge.setParent(parentEdge);
-			return parentEdge;
+			Node parentNode = find(node.getParent());
+			node.setParent(parentNode);
+			return parentNode;
 		}
 	}
 	
-	public static void union(Edge firstRoot, Edge secondRoot) {
-        // first and second are not already in same set. Merge them.
+	public static boolean union(Node first, Node second) {     
+        Node firstRoot = find(first);
+        Node secondRoot = find(second);
+		if(firstRoot == secondRoot) {
+			return false;
+		}
+		// first and second are not already in same set. Merge them.
 		if(firstRoot.getRank() < secondRoot.getRank()) {
 			firstRoot.setParent(secondRoot);
 		} else if(firstRoot.getRank() > secondRoot.getRank()) {
@@ -24,5 +29,6 @@ public class UnionFind {
 			secondRoot.setParent(firstRoot);
 			firstRoot.incrementRank();
 		}
+		return true;
 	}
 }

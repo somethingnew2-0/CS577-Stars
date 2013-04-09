@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 public class Stars {
 	
-	private static final int EDGE_INTENSITY_FALLOFF = 48;
+	private static final int EDGE_INTENSITY_FALLOFF = 32;
 
 	/**
 	 * @param args
@@ -83,40 +83,17 @@ public class Stars {
 		
 		while (!queue.isEmpty()) {
 			Edge edge = queue.poll();
-//			System.out.println(edge.getAverageIntensity());
-			PixelNode firstPixel = (PixelNode) edge.getFirst();
-			PixelNode secondPixel = (PixelNode) edge.getSecond();
-			Edge firstPixelEdge = firstPixel.getEdge();
-			Edge secondPixelEdge = secondPixel.getEdge();
-			if(firstPixelEdge == null || secondPixelEdge == null) {
-				// Second pixel hasn't been added to a tree
-				if(firstPixelEdge != null) {
-					Edge firstRoot = UnionFind.find(firstPixelEdge);
-					UnionFind.union(firstRoot, edge);
-				}
-				// First pixel hasn't been added to a tree
-				if(secondPixelEdge != null) {
-					Edge secondRoot = UnionFind.find(secondPixelEdge);
-					UnionFind.union(secondRoot, edge);
-				}
-				firstPixel.addEdge(edge);
-				secondPixel.addEdge(edge);
-			} else {
-				Edge firstRoot = UnionFind.find(firstPixelEdge);
-				Edge secondRoot = UnionFind.find(secondPixelEdge);
-				if(firstRoot != secondRoot) {
-					UnionFind.union(firstRoot, edge);
-					UnionFind.union(firstRoot, secondRoot);
-					firstPixel.addEdge(edge);
-					secondPixel.addEdge(edge);
-				}
+			Node first = edge.getFirst();
+			Node second = edge.getSecond();
+			if(UnionFind.union(first, second)) {
+				first.addEdge(edge);
+				second.addEdge(edge);
 			}
 		}
 		
-//		totalPixelNodes = new TreeSet<PixelNode>(totalPixelNodes);
-		Set<Edge> stars = new HashSet<Edge>();
+		Set<Node> stars = new HashSet<Node>();
 		for (PixelNode pixelNode : totalPixelNodes) {
-			stars.add(UnionFind.find(pixelNode.getEdge()));
+			stars.add(UnionFind.find(pixelNode));
 		}
 		
 		System.out.println(stars.size());
