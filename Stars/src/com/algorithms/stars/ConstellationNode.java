@@ -2,22 +2,22 @@ package com.algorithms.stars;
 
 import java.util.LinkedList;
 
-public class StarNode extends Node {
+public class ConstellationNode extends Node {
 	private int x, y;
-	private LinkedList<PixelNode> pixels;
+	private LinkedList<StarNode> stars;
 	
-	public StarNode(PixelNode node) {
+	public ConstellationNode(StarNode node) {
 		super();
-		this.pixels = new LinkedList<PixelNode>();
+		this.stars = new LinkedList<StarNode>();
 		createNodeGraph(node);
 		
 		// Calculate center by averaging all pixels
-		for (PixelNode pixelNode : pixels) {
-			x += pixelNode.getX();
-			y += pixelNode.getY();
+		for (StarNode starNode : stars) {
+			x += starNode.getX();
+			y += starNode.getY();
 		}
-		x /= pixels.size();
-		y /= pixels.size();
+		x /= stars.size();
+		y /= stars.size();
 	}
 	
 	public int getX() {
@@ -28,16 +28,16 @@ public class StarNode extends Node {
 		return y;
 	}
 	
-	public LinkedList<PixelNode> getPixels() {
-		return pixels;
+	public LinkedList<StarNode> getStars() {
+		return stars;
 	}
-	
+
 	private void createNodeGraph(Node node) {
 		createNodeGraph(node, null);
 	}
 	
 	private void createNodeGraph(Node node, Edge enteringEdge) {
-		pixels.add((PixelNode)node);
+		stars.add((StarNode)node);
 		for (Edge edge : node.getEdges()) {
 			if(edge == enteringEdge) {
 				continue;

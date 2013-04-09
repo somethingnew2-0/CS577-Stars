@@ -112,13 +112,16 @@ public class Stars {
 			};
 		});
 		
+		List<StarNode> totalStarNodes = new LinkedList<StarNode>();
+		
 		int broadphaseLegSize = (int)(Math.sqrt(stars.size()));
 		int broadphaseCellWidth = starImg.getWidth() / broadphaseLegSize;
 		int broadphaseCellHeight = starImg.getHeight() / broadphaseLegSize;
 		List<StarNode>[][] broadphaseStars = new LinkedList[broadphaseLegSize][broadphaseLegSize];
 		for (PixelNode pixelNodeRoot : stars) {
 			StarNode starNode = new StarNode(pixelNodeRoot);
-			System.out.println("StarNode: " + starNode.getX() + " " + starNode.getY());
+			totalStarNodes.add(starNode);
+//			System.out.println("StarNode: " + starNode.getX() + " " + starNode.getY());
 			LinkedList<StarNode> broadphaseCell = (LinkedList<StarNode>) broadphaseStars[starNode.getX()/(broadphaseCellWidth+1)][starNode.getY()/(broadphaseCellHeight+1)];
 			if(broadphaseCell == null) {
 				broadphaseStars[starNode.getX()/(broadphaseCellWidth+1)][starNode.getY()/(broadphaseCellHeight+1)] = broadphaseCell = new LinkedList<StarNode>();
@@ -129,7 +132,59 @@ public class Stars {
 			}
 			broadphaseCell.add(starNode);
 		}
-		System.out.println("Done");
-	}
-
+		
+				
+		for (int x = 0; x < broadphaseLegSize - 1; x++) {
+			for (int y = 0; y < broadphaseLegSize - 1; y++) {
+				List<StarNode> broadphaseStarCell = broadphaseStars[x][y];
+				if(broadphaseStarCell != null) {
+					List<StarNode> neighborStarCell = broadphaseStars[x+1][y];
+					if(neighborStarCell != null) {
+						for (StarNode starNode : broadphaseStarCell) {
+							for (StarNode neighborStarNode : neighborStarCell) {
+								starMinPriorityQueue.add(new StarEdge(starNode, neighborStarNode));	
+							}							
+						}
+					}
+					neighborStarCell = broadphaseStars[x][y+1];
+					if(neighborStarCell != null) {
+						for (StarNode starNode : broadphaseStarCell) {
+							for (StarNode neighborStarNode : neighborStarCell) {
+								starMinPriorityQueue.add(new StarEdge(starNode, neighborStarNode));	
+							}							
+						}
+					}
+				}
+			}
+			
+		}
+		
+		while (!starMinPriorityQueue.isEmpty()) {
+			Edge edge = starMinPriorityQueue.poll();
+			Node first = edge.getFirst();
+			Node second = edge.getSecond();
+			if(UnionFind.union(first, second)) {
+				first.addEdge(edge);
+				second.addEdge(edge);
+			}
+		}
+	
+		
+		Set<StarNode> constellations = new HashSet<StarNode>();
+		for (StarNode starNode : totalStarNodes) {
+			constellations.add((StarNode)UnionFind.find(starNode));
+		}
+		
+		List<ConstellationNode> totalConstellationNodes = new LinkedList<ConstellationNode>();
+		for (StarNode starNodeRoot : constellations) {
+			ConstellationNode constellationNode = new ConstellationNode(starNodeRoot);
+			System.out.println("ConstellationNode: " + constellationNode.getX() + " " + constellationNode.getY());
+			for (StarNode starNode : constellationNode.getStars()) {
+				System.out.println("     StarNode: " + starNode.getX() + " " + starNode.getY());
+			}
+			totalConstellationNodes.add(constellationNode);
+		}
+		
+		System.out.println(constellations.size());
+	}	
 }
