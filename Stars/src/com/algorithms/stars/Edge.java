@@ -1,29 +1,29 @@
 package com.algorithms.stars;
 
 public class Edge {		
-	private PixelNode first, second;
-	private int averageIntensity;
+	private Node first, second;
+	private int weight;
 	
 	private Edge parent;
 	private int rank;
 	
-	public Edge (PixelNode right, PixelNode left) {
-			this.first = right;
-			this.second = left;
-			this.averageIntensity = (right.getIntensity() + left.getIntensity())/2;
+	public Edge (Node first, Node right, int weight) {
+			this.first = first;
+			this.second = right;
+			this.weight = weight;
 			this.rank = 0;
 	}
 	
-	public PixelNode getFirst() {
+	public Node getFirst() {
 		return first;
 	}
 
-	public PixelNode getSecond() {
+	public Node getSecond() {
 		return second;
 	}
 
-	public int getAverageIntensity() {
-		return this.averageIntensity;
+	public int getWeight() {
+		return this.weight;
 	}
 	
 	public Edge getParent() {

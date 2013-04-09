@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 public class Stars {
 	
-	private static final int EDGE_INTENSITY_FALLOFF = 32;
+	private static final int EDGE_INTENSITY_FALLOFF = 48;
 
 	/**
 	 * @param args
@@ -36,7 +36,7 @@ public class Stars {
 		// make a priority queue to hold edges with custom comparator
 		PriorityQueue<Edge> queue = new PriorityQueue<Edge>(capacity, new Comparator<Edge>() {
 			public int compare(Edge edgeOne, Edge edgeTwo) {
-				return edgeTwo.getAverageIntensity() - edgeOne.getAverageIntensity();
+				return edgeTwo.getWeight() - edgeOne.getWeight();
 			};
 		});
 		
@@ -63,16 +63,16 @@ public class Stars {
 				if(x < width - 1) {
 					nextColumnRight[y] = new PixelNode(starImg.getRGB(x + 1, y) & 0xFF, x + 1, y);
 
-					Edge edge = new Edge(currentNode, nextColumnRight[y]);
-					if(edge.getAverageIntensity() > EDGE_INTENSITY_FALLOFF) {
+					Edge edge = new PixelEdge(currentNode, nextColumnRight[y]);
+					if(edge.getWeight() > EDGE_INTENSITY_FALLOFF) {
 						totalPixelNodes.add(currentNode);
 						totalPixelNodes.add(nextColumnRight[y]);
 						queue.add(edge);
 					}
 				}
 				if(y < height - 1) {
-					Edge edge = new Edge(currentNode, nextColumnRight[y+1]);
-					if(edge.getAverageIntensity() > EDGE_INTENSITY_FALLOFF) {
+					Edge edge = new PixelEdge(currentNode, nextColumnRight[y+1]);
+					if(edge.getWeight() > EDGE_INTENSITY_FALLOFF) {
 						totalPixelNodes.add(currentNode);
 						totalPixelNodes.add(nextColumnRight[y+1]);
 						queue.add(edge);
@@ -84,8 +84,8 @@ public class Stars {
 		while (!queue.isEmpty()) {
 			Edge edge = queue.poll();
 //			System.out.println(edge.getAverageIntensity());
-			PixelNode firstPixel = edge.getFirst();
-			PixelNode secondPixel = edge.getSecond();
+			PixelNode firstPixel = (PixelNode) edge.getFirst();
+			PixelNode secondPixel = (PixelNode) edge.getSecond();
 			Edge firstPixelEdge = firstPixel.getEdge();
 			Edge secondPixelEdge = secondPixel.getEdge();
 			if(firstPixelEdge == null || secondPixelEdge == null) {
