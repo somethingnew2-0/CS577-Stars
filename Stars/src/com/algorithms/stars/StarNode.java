@@ -28,6 +28,10 @@ public class StarNode extends Node {
 		return y;
 	}
 	
+	public int getApproximateSize() {
+		return pixels.size() / 2;
+	}
+	
 	public LinkedList<PixelNode> getPixels() {
 		return pixels;
 	}

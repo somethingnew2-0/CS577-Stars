@@ -18,15 +18,15 @@ import javax.imageio.ImageIO;
 
 public class Stars {
 	
-	private static final int EDGE_INTENSITY_FALLOFF = 128;
-	private static final int[] N = { 1 , 10, 100, 1000 };
+	private static final int EDGE_INTENSITY_FALLOFF = 96;
+	private static final int N = 1000000;
 	private static final float CONSTELLATION_CONSTANT = 1.9f;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File inFile = new File("stars.jpg");
+		File inFile = new File("second-stars.jpg");
 		BufferedImage starImg = null, constellationImg = null;
 		try {
 			starImg = ImageIO.read(inFile);
@@ -101,33 +101,21 @@ public class Stars {
 			}
 		}
 		
-		
-		for (int n : N) {
-			// Save a list of the used edges so we can reset the graph
-			List<Edge> usedEdges = new LinkedList<Edge>();			
-			// Run Kruskal's algorithm for the Max-Spanning Tree
-			for (int i = 0; i < n && !edgeMaxPriorityQueue.isEmpty(); i++) {
-				Edge edge = edgeMaxPriorityQueue.poll();
-				Node first = edge.getFirst();
-				Node second = edge.getSecond();
-				if(UnionFind.union(first, second)) {
-					first.addEdge(edge);
-					second.addEdge(edge);
-				}
-				usedEdges.add(edge);
+		List<PixelNode> usedNodes = new LinkedList<PixelNode>();
+		// Run Kruskal's algorithm for the Max-Spanning Tree
+		for (int i = 0; i < N && !edgeMaxPriorityQueue.isEmpty(); i++) {
+			Edge edge = edgeMaxPriorityQueue.poll();
+			Node first = edge.getFirst();
+			Node second = edge.getSecond();
+			if(UnionFind.union(first, second)) {
+				first.addEdge(edge);
+				second.addEdge(edge);
 			}
-			
-			// Reset the edges of the graph and return to the queue
-			for (Edge edge : usedEdges) {
-				edge.getFirst().getEdges().clear();
-				edge.getSecond().getEdges().clear();
-				edgeMaxPriorityQueue.add(edge);
-			}
-			
+			usedNodes.add((PixelNode)first);
 		}
 		
 		Set<PixelNode> stars = new HashSet<PixelNode>();
-		for (PixelNode pixelNode : totalPixelNodes) {
+		for (PixelNode pixelNode : usedNodes) {
 			stars.add((PixelNode)UnionFind.find(pixelNode));
 		}
 		System.out.println(stars.size());
@@ -140,12 +128,20 @@ public class Stars {
 		
 		List<StarNode> totalStarNodes = new LinkedList<StarNode>();
 		
+		Graphics2D g2d = starImg.createGraphics();
+	    BasicStroke bs = new BasicStroke(2);
+	    g2d.setStroke(bs);
+	    g2d.setColor(Color.RED);
+		
 		int broadphaseLegSize = (int)(Math.sqrt(stars.size() * CONSTELLATION_CONSTANT));
 		int broadphaseCellWidth = starImg.getWidth() / broadphaseLegSize;
 		int broadphaseCellHeight = starImg.getHeight() / broadphaseLegSize;
 		List<StarNode>[][] broadphaseStars = new LinkedList[broadphaseLegSize][broadphaseLegSize];
 		for (PixelNode pixelNodeRoot : stars) {
 			StarNode starNode = new StarNode(pixelNodeRoot);
+			
+			g2d.drawOval(starNode.getX() - (starNode.getApproximateSize() / 2), starNode.getY() - (starNode.getApproximateSize() / 2), starNode.getApproximateSize(), starNode.getApproximateSize());
+			
 			totalStarNodes.add(starNode);
 //			System.out.println("StarNode: " + starNode.getX() + " " + starNode.getY());
 			LinkedList<StarNode> broadphaseCell = (LinkedList<StarNode>) broadphaseStars[starNode.getX()/(broadphaseCellWidth+1)][starNode.getY()/(broadphaseCellHeight+1)];
@@ -157,6 +153,15 @@ public class Stars {
 				}
 			}
 			broadphaseCell.add(starNode);
+		}
+		
+		try {
+		    // retrieve image
+		    File outputfile = new File("second-stars-"+N+".jpg");
+		    ImageIO.write(starImg, "jpg", outputfile);
+		} catch (IOException e) {
+			System.out.println("Could not write output file.");
+			System.exit(0);
 		}
 		
 		
@@ -202,8 +207,8 @@ public class Stars {
 			constellations.add((StarNode)UnionFind.find(starNode));
 		}
 		
-		Graphics2D g2d = constellationImg.createGraphics();
-        BasicStroke bs = new BasicStroke(2);
+		g2d = constellationImg.createGraphics();
+        bs = new BasicStroke(2);
         g2d.setStroke(bs);
         g2d.setColor(Color.RED);
         
@@ -226,7 +231,7 @@ public class Stars {
 		
 		try {
 		    // retrieve image
-		    File outputfile = new File("constellation.jpg");
+		    File outputfile = new File("second-constellation.jpg");
 		    ImageIO.write(constellationImg, "jpg", outputfile);
 		} catch (IOException e) {
 			System.out.println("Could not write output file.");
