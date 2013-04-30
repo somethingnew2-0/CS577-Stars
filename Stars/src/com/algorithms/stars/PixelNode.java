@@ -7,6 +7,7 @@ public class PixelNode extends Node {
 	
 	public PixelNode(BufferedImage image, int x, int y) {
 		super();
+		// Inline getBlue() with & 0xFF mask
 		this.intensity = image.getRGB(x, y) & 0xFF;
 		this.x = x;
 		this.y = y;

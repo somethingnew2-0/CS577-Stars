@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 public class Stars {
 	
 	private static final int EDGE_INTENSITY_FALLOFF = 128;
+	private static final int[] N = { 1 , 10, 100, 1000 };
 	private static final float CONSTELLATION_CONSTANT = 1.9f;
 
 	/**
@@ -46,7 +47,7 @@ public class Stars {
 		int capacity = width * height; // initial capacity set to total # pixels
 		
 		// make a priority queue to hold edges with custom comparator
-		PriorityQueue<Edge> pixelMaxPriorityQueue = new PriorityQueue<Edge>(capacity, new Comparator<Edge>() {
+		PriorityQueue<Edge> edgeMaxPriorityQueue = new PriorityQueue<Edge>(capacity, new Comparator<Edge>() {
 			public int compare(Edge edgeOne, Edge edgeTwo) {
 				return edgeTwo.getWeight() - edgeOne.getWeight();
 			};
@@ -66,7 +67,6 @@ public class Stars {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				PixelNode currentNode;				
-				// Inline getBlue() with & 0xFF mask
 				if(x == 0) {
 					if(y == 0) {
 						currentNode = new PixelNode(starImg, 0, 0);
@@ -87,7 +87,7 @@ public class Stars {
 					if(edge.getWeight() > EDGE_INTENSITY_FALLOFF) {
 						totalPixelNodes.add(currentNode);
 						totalPixelNodes.add(nextColumnRight[y]);
-						pixelMaxPriorityQueue.add(edge);
+						edgeMaxPriorityQueue.add(edge);
 					}
 				}
 				if(y < height - 1) {
@@ -95,21 +95,35 @@ public class Stars {
 					if(edge.getWeight() > EDGE_INTENSITY_FALLOFF) {
 						totalPixelNodes.add(currentNode);
 						totalPixelNodes.add(nextColumnRight[y+1]);
-						pixelMaxPriorityQueue.add(edge);
+						edgeMaxPriorityQueue.add(edge);
 					}
 				}
 			}
 		}
 		
-		// Run Kruskal's algorithm for the Max-Spanning Tree
-		while (!pixelMaxPriorityQueue.isEmpty()) {
-			Edge edge = pixelMaxPriorityQueue.poll();
-			Node first = edge.getFirst();
-			Node second = edge.getSecond();
-			if(UnionFind.union(first, second)) {
-				first.addEdge(edge);
-				second.addEdge(edge);
+		
+		for (int n : N) {
+			// Save a list of the used edges so we can reset the graph
+			List<Edge> usedEdges = new LinkedList<Edge>();			
+			// Run Kruskal's algorithm for the Max-Spanning Tree
+			for (int i = 0; i < n && !edgeMaxPriorityQueue.isEmpty(); i++) {
+				Edge edge = edgeMaxPriorityQueue.poll();
+				Node first = edge.getFirst();
+				Node second = edge.getSecond();
+				if(UnionFind.union(first, second)) {
+					first.addEdge(edge);
+					second.addEdge(edge);
+				}
+				usedEdges.add(edge);
 			}
+			
+			// Reset the edges of the graph and return to the queue
+			for (Edge edge : usedEdges) {
+				edge.getFirst().getEdges().clear();
+				edge.getSecond().getEdges().clear();
+				edgeMaxPriorityQueue.add(edge);
+			}
+			
 		}
 		
 		Set<PixelNode> stars = new HashSet<PixelNode>();
