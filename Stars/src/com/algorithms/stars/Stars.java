@@ -18,15 +18,15 @@ import javax.imageio.ImageIO;
 
 public class Stars {
 	
-	private static final int EDGE_INTENSITY_FALLOFF = 96;
-	private static final int N = 1000000;
+	private static final int EDGE_INTENSITY_FALLOFF = 128;
+	private static final int N = 100000;
 	private static final float CONSTELLATION_CONSTANT = 1.9f;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File inFile = new File("second-stars.jpg");
+		File inFile = new File("stars.jpg");
 		BufferedImage starImg = null, constellationImg = null;
 		try {
 			starImg = ImageIO.read(inFile);
@@ -231,7 +231,7 @@ public class Stars {
 		
 		try {
 		    // retrieve image
-		    File outputfile = new File("second-constellation.jpg");
+		    File outputfile = new File("constellation.jpg");
 		    ImageIO.write(constellationImg, "jpg", outputfile);
 		} catch (IOException e) {
 			System.out.println("Could not write output file.");
